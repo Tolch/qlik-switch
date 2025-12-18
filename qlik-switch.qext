@@ -1,0 +1,15 @@
+{
+	"name": "Variable Switch",
+	"description": "A switch control to toggle between 2 or 3 variable values",
+	"icon": "extension",
+	"type": "visualization",
+	"version": "1.0.0",
+	"author": "Luke Tolchard",
+	"homepage": "",
+	"keywords": "qlik-sense, visualization, switch, variable",
+	"license": "",
+	"repository": "",
+	"dependencies": {
+		"qlik-sense": ">=3.0.x"
+	}
+}

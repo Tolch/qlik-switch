@@ -1,0 +1,79 @@
+/* Container */
+.qlik-switch-container {
+	width: 100%;
+	height: 100%;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	padding: 20px;
+	box-sizing: border-box;
+}
+
+/* Two Position Toggle Switch */
+.qlik-switch-toggle {
+	width: 80px;
+	height: 40px;
+	background-color: #ccc;
+	border-radius: 20px;
+	position: relative;
+	cursor: pointer;
+	transition: background-color 0.3s;
+}
+
+.qlik-switch-toggle:hover {
+	background-color: #b3b3b3;
+}
+
+.qlik-switch-slider {
+	width: 36px;
+	height: 36px;
+	background-color: #fff;
+	border-radius: 50%;
+	position: absolute;
+	top: 2px;
+	left: 2px;
+	transition: transform 0.3s;
+	box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+.qlik-switch-slider.active-right {
+	transform: translateX(40px);
+}
+
+/* Three Position Segmented Control */
+.qlik-switch-segmented {
+	display: flex;
+	border: 1px solid #ccc;
+	border-radius: 4px;
+	overflow: hidden;
+	height: 40px;
+}
+
+.qlik-switch-segment {
+	flex: 1;
+	min-width: 60px;
+	background-color: #f5f5f5;
+	border-right: 1px solid #ccc;
+	cursor: pointer;
+	transition: background-color 0.2s;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+}
+
+.qlik-switch-segment:last-child {
+	border-right: none;
+}
+
+.qlik-switch-segment:hover {
+	background-color: #e8e8e8;
+}
+
+.qlik-switch-segment.active {
+	background-color: #0693e3;
+	color: #fff;
+}
+
+.qlik-switch-segment.active:hover {
+	background-color: #0570b8;
+}
