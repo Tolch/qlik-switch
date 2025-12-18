@@ -1,6 +1,6 @@
 {
 	"name": "Variable Switch",
-	"description": "A switch control to toggle between 2 or 3 variable values",
+	"description": "A switch control to toggle between 2-10 variable values",
 	"icon": "extension",
 	"type": "visualization",
 	"version": "1.0.0",

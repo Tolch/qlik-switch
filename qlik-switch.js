@@ -23,16 +23,12 @@ define(["qlik", "jquery", "css!./style.css"], function(qlik, $) {
 								positionCount: {
 									ref: "positionCount",
 									label: "Number of Positions",
-									type: "string",
-									component: "dropdown",
-									options: [{
-										value: "2",
-										label: "2 Positions"
-									}, {
-										value: "3",
-										label: "3 Positions"
-									}],
-									defaultValue: "2"
+									type: "integer",
+									component: "slider",
+									min: 2,
+									max: 10,
+									step: 1,
+									defaultValue: 2
 								},
 								position1Value: {
 									ref: "position1Value",
@@ -54,34 +50,91 @@ define(["qlik", "jquery", "css!./style.css"], function(qlik, $) {
 									type: "string",
 									expression: "optional",
 									show: function(layout) {
-										return layout.positionCount === "3";
+										return layout.positionCount >= 3;
+									},
+									defaultValue: ""
+								},
+								position4Value: {
+									ref: "position4Value",
+									label: "Position 4 Value",
+									type: "string",
+									expression: "optional",
+									show: function(layout) {
+										return layout.positionCount >= 4;
+									},
+									defaultValue: ""
+								},
+								position5Value: {
+									ref: "position5Value",
+									label: "Position 5 Value",
+									type: "string",
+									expression: "optional",
+									show: function(layout) {
+										return layout.positionCount >= 5;
+									},
+									defaultValue: ""
+								},
+								position6Value: {
+									ref: "position6Value",
+									label: "Position 6 Value",
+									type: "string",
+									expression: "optional",
+									show: function(layout) {
+										return layout.positionCount >= 6;
+									},
+									defaultValue: ""
+								},
+								position7Value: {
+									ref: "position7Value",
+									label: "Position 7 Value",
+									type: "string",
+									expression: "optional",
+									show: function(layout) {
+										return layout.positionCount >= 7;
+									},
+									defaultValue: ""
+								},
+								position8Value: {
+									ref: "position8Value",
+									label: "Position 8 Value",
+									type: "string",
+									expression: "optional",
+									show: function(layout) {
+										return layout.positionCount >= 8;
+									},
+									defaultValue: ""
+								},
+								position9Value: {
+									ref: "position9Value",
+									label: "Position 9 Value",
+									type: "string",
+									expression: "optional",
+									show: function(layout) {
+										return layout.positionCount >= 9;
+									},
+									defaultValue: ""
+								},
+								position10Value: {
+									ref: "position10Value",
+									label: "Position 10 Value",
+									type: "string",
+									expression: "optional",
+									show: function(layout) {
+										return layout.positionCount >= 10;
 									},
 									defaultValue: ""
 								},
 								defaultPosition: {
 									ref: "defaultPosition",
 									label: "Default Position",
-									type: "string",
-									component: "dropdown",
-									options: function(layout) {
-										var options = [{
-											value: "1",
-											label: "Position 1"
-										}, {
-											value: "2",
-											label: "Position 2"
-										}];
-										
-										if (layout.positionCount === "3") {
-											options.push({
-												value: "3",
-												label: "Position 3"
-											});
-										}
-										
-										return options;
+									type: "integer",
+									component: "slider",
+									min: 1,
+									max: function(layout) {
+										return layout.positionCount || 2;
 									},
-									defaultValue: "1"
+									step: 1,
+									defaultValue: 1
 								}
 							}
 						}
@@ -92,11 +145,18 @@ define(["qlik", "jquery", "css!./style.css"], function(qlik, $) {
 
 		initialProperties: {
 			variableName: "",
-			positionCount: "2",
+			positionCount: 2,
 			position1Value: "",
 			position2Value: "",
 			position3Value: "",
-			defaultPosition: "1"
+			position4Value: "",
+			position5Value: "",
+			position6Value: "",
+			position7Value: "",
+			position8Value: "",
+			position9Value: "",
+			position10Value: "",
+			defaultPosition: 1
 		},
 
 		paint: function($element, layout) {
@@ -105,22 +165,22 @@ define(["qlik", "jquery", "css!./style.css"], function(qlik, $) {
 			
 			// Get settings
 			var variableName = layout.variableName;
-			var positionCount = parseInt(layout.positionCount);
-			var position1Value = layout.position1Value;
-			var position2Value = layout.position2Value;
-			var position3Value = layout.position3Value;
-			var defaultPosition = parseInt(layout.defaultPosition);
+			var positionCount = parseInt(layout.positionCount) || 2;
+			var defaultPosition = parseInt(layout.defaultPosition) || 1;
+			
+			// Get position values dynamically
+			var positionValues = [];
+			for (var i = 1; i <= positionCount; i++) {
+				positionValues.push(layout['position' + i + 'Value'] || '');
+			}
 			
 			// Store current position in element data
 			if (!$element.data('currentPosition')) {
 				$element.data('currentPosition', defaultPosition);
 				
 				// Set initial variable value
-				if (variableName) {
-					var initialValue = defaultPosition === 1 ? position1Value : 
-									  defaultPosition === 2 ? position2Value : 
-									  position3Value;
-					app.variable.setStringValue(variableName, initialValue);
+				if (variableName && positionValues[defaultPosition - 1]) {
+					app.variable.setStringValue(variableName, positionValues[defaultPosition - 1]);
 				}
 			}
 			
@@ -147,9 +207,9 @@ define(["qlik", "jquery", "css!./style.css"], function(qlik, $) {
 				// Click handler for two-position switch
 				$switch.on('click', function() {
 					var newPosition = currentPosition === 1 ? 2 : 1;
-					var newValue = newPosition === 1 ? position1Value : position2Value;
+					var newValue = positionValues[newPosition - 1];
 					
-					if (variableName) {
+					if (variableName && newValue) {
 						app.variable.setStringValue(variableName, newValue);
 					}
 					
@@ -158,28 +218,28 @@ define(["qlik", "jquery", "css!./style.css"], function(qlik, $) {
 				});
 				
 			} else {
-				// Three position segmented control
+				// Multi-position segmented control
 				var $switch = $('<div class="qlik-switch-segmented"></div>');
 				
-				var $btn1 = $('<div class="qlik-switch-segment" data-position="1"></div>');
-				var $btn2 = $('<div class="qlik-switch-segment" data-position="2"></div>');
-				var $btn3 = $('<div class="qlik-switch-segment" data-position="3"></div>');
+				// Create segments dynamically
+				for (var i = 1; i <= positionCount; i++) {
+					var $segment = $('<div class="qlik-switch-segment" data-position="' + i + '"></div>');
+					
+					if (currentPosition === i) {
+						$segment.addClass('active');
+					}
+					
+					$switch.append($segment);
+				}
 				
-				if (currentPosition === 1) $btn1.addClass('active');
-				if (currentPosition === 2) $btn2.addClass('active');
-				if (currentPosition === 3) $btn3.addClass('active');
-				
-				$switch.append($btn1).append($btn2).append($btn3);
 				$container.append($switch);
 				
-				// Click handlers for three-position switch
+				// Click handlers for segments
 				$('.qlik-switch-segment', $switch).on('click', function() {
 					var newPosition = parseInt($(this).data('position'));
-					var newValue = newPosition === 1 ? position1Value : 
-								  newPosition === 2 ? position2Value : 
-								  position3Value;
+					var newValue = positionValues[newPosition - 1];
 					
-					if (variableName) {
+					if (variableName && newValue) {
 						app.variable.setStringValue(variableName, newValue);
 					}
 					

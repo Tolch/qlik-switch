@@ -1,15 +1,16 @@
 # Qlik Sense Variable Switch Extension
 
-A custom Qlik Sense visualization extension that provides an interactive switch control to toggle between 2 or 3 variable values.
+A custom Qlik Sense visualization extension that provides an interactive switch control to toggle between 2-10 variable values.
 
 ## Overview
 
-The Variable Switch extension allows users to dynamically change a Qlik variable's value by clicking a visual switch control. It supports both a two-position toggle slider and a three-position segmented control, making it ideal for scenarios like switching between years, quarters, or any other categorical values.
+The Variable Switch extension allows users to dynamically change a Qlik variable's value by clicking a visual switch control. It supports a two-position toggle slider for 2 positions, and a segmented control for 3 or more positions (up to 10), making it ideal for scenarios like switching between years, quarters, regions, or any other categorical values.
 
 ## Features
 
 - **Two Position Mode**: Classic toggle slider (left/right)
-- **Three Position Mode**: Segmented control (left/middle/right)
+- **Multi-Position Mode**: Segmented control for 3-10 positions
+- **Flexible Configuration**: Choose any number of positions from 2 to 10
 - **Configurable Values**: Set custom values for each position
 - **Default Position**: Choose which position is active on load
 - **Expression Support**: Use expressions in value fields
@@ -28,11 +29,21 @@ The Variable Switch extension allows users to dynamically change a Qlik variable
 
 ### Server Installation (QMC)
 
-1. Zip the `qlik-switch` folder
+1. **Package the extension files** (exclude .git folder):
+   - **Option A - Manual**: Create a zip file containing only these files:
+     - `qlik-switch.qext`
+     - `qlik-switch.js`
+     - `style.css`
+   - **Option B - Command line** (from project directory):
+     ```bash
+     zip -r qlik-switch.zip qlik-switch.qext qlik-switch.js style.css
+     ```
 2. Open Qlik Management Console (QMC)
 3. Navigate to **Extensions** in the left menu
 4. Click **Import** and select the zip file
 5. The extension will be available in your Qlik Sense hub
+
+**Important**: Do not zip the entire folder - only include the extension files listed above. The `.git` folder and other repository files should not be included in the package.
 
 ## Configuration
 
@@ -47,28 +58,21 @@ Once added to a sheet, configure the extension using the property panel:
    - Example: `vYear`, `vQuarter`, `vRegion`
    - Note: Variable should exist in your app (create it in Variable Overview first)
 
-2. **Number of Positions**
-   - Choose between 2 or 3 positions
-   - Default: 2 Positions
+2. **Number of Positions** (Required)
+   - Use the slider to select between 2 and 10 positions
+   - Default: 2
+   - The property panel will dynamically show value input fields based on this number
 
-3. **Position 1 Value** (Required)
-   - The value to assign when Position 1 is selected
-   - Supports expressions
+3. **Position Values** (Required)
+   - Position 1 Value, Position 2 Value, etc.
+   - Only the number of position fields matching your selection will be visible
+   - Each field supports expressions
    - Example: `2023`, `'North'`, `=Year(Today())`
 
-4. **Position 2 Value** (Required)
-   - The value to assign when Position 2 is selected
-   - Example: `2024`, `'South'`, `=Year(Today())-1`
-
-5. **Position 3 Value** (Conditional)
-   - Only visible when "3 Positions" is selected
-   - The value to assign when Position 3 is selected
-   - Example: `2025`, `'East'`
-
-6. **Default Position**
-   - Which position should be active when the sheet loads
-   - Default: Position 1
-   - Options adjust based on Number of Positions selected
+4. **Default Position** (Required)
+   - Use the slider to select which position should be active on load
+   - Range adjusts dynamically from 1 to your selected number of positions
+   - Default: 1
 
 ## Usage Examples
 
@@ -76,10 +80,10 @@ Once added to a sheet, configure the extension using the property panel:
 
 **Configuration:**
 - Variable Name: `vYear`
-- Number of Positions: `2 Positions`
+- Number of Positions: `2`
 - Position 1 Value: `2023`
 - Position 2 Value: `2024`
-- Default Position: `Position 1`
+- Default Position: `1`
 
 **Result:** Toggle between 2023 and 2024, starting with 2023
 
@@ -87,25 +91,36 @@ Once added to a sheet, configure the extension using the property panel:
 
 **Configuration:**
 - Variable Name: `vPeriod`
-- Number of Positions: `3 Positions`
+- Number of Positions: `3`
 - Position 1 Value: `Last Year`
 - Position 2 Value: `This Year`
 - Position 3 Value: `Next Year`
-- Default Position: `Position 2`
+- Default Position: `2`
 
 **Result:** Three-way switch for time periods, starting with "This Year"
 
-### Example 3: Region Filter (3 Positions with Expressions)
+### Example 3: Quarter Selector (4 Positions)
 
 **Configuration:**
-- Variable Name: `vRegion`
-- Number of Positions: `3 Positions`
-- Position 1 Value: `North`
-- Position 2 Value: `South`
-- Position 3 Value: `East`
-- Default Position: `Position 1`
+- Variable Name: `vQuarter`
+- Number of Positions: `4`
+- Position 1 Value: `Q1`
+- Position 2 Value: `Q2`
+- Position 3 Value: `Q3`
+- Position 4 Value: `Q4`
+- Default Position: `1`
 
-**Result:** Select regions, starting with "North"
+**Result:** Four-way segmented control for quarters, starting with Q1
+
+### Example 4: Weekday Selector (7 Positions)
+
+**Configuration:**
+- Variable Name: `vWeekday`
+- Number of Positions: `7`
+- Position 1-7 Values: `Monday`, `Tuesday`, `Wednesday`, `Thursday`, `Friday`, `Saturday`, `Sunday`
+- Default Position: `1`
+
+**Result:** Seven-way segmented control for days of the week
 
 ## Using Variables in Your App
 
@@ -147,8 +162,8 @@ Sum({<Region={'$(vRegion)'}>} Revenue)
 - Ensure position values are valid for your use case
 
 ### Position 3 Options Not Showing
-- Make sure "Number of Positions" is set to "3 Positions"
-- The Position 3 settings appear dynamically
+- Make sure "Number of Positions" is set to 3 or higher
+- Position value fields appear dynamically based on the count
 
 ### Extension Shows Error
 - Verify Qlik Sense version is 3.0 or higher
@@ -179,7 +194,8 @@ qlik-switch/
 
 ### Version 1.0.0 (Initial Release)
 - Two-position toggle switch
-- Three-position segmented control
+- Multi-position segmented control (3-10 positions)
+- Dynamic position count selection (2-10)
 - Configurable variable and values
 - Default position selection
 - Expression support for values
@@ -190,7 +206,8 @@ This extension is provided as-is without warranty.
 
 ## Author
 
-Luke Tolchard
+[Luke T
+](https://www.linkedin.com/in/tolchard/)
 
 ## Support
 
